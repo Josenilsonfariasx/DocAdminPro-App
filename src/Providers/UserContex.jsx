@@ -8,6 +8,18 @@ export const UserContext = createContext({});
 export const UserProvider = ({ children }) => {
   const navi = useNavigate();
 
+  const login = async (form) => {
+    try {
+      const { data } = await Api.post("/auth/login", form);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user-doc", JSON.stringify(data.user));
+      // navi("/home");
+      toast.success("Login efetuado com sucesso ✅");
+    } catch (error) {
+      toast.warning("Email ou senha incorretos ❌");
+    }
+  }
+
   const registerUser = async (form) => {
     try {
       const { data } = await Api.post("/users/create", form);
@@ -22,7 +34,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ registerUser }}>
+    <UserContext.Provider value={{ registerUser, login }}>
       {children}
     </UserContext.Provider>
   );
